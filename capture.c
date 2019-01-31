@@ -7,26 +7,23 @@ void packet_callback(u_char *args, const struct pcap_pkthdr *pkthdr, const u_cha
     if (pkthdr->len == 65) {
         if (packet[64] == 0x0d) {
             printf("received mute\n");
-            system("pactl set-sink-mute 1 toggle");
+            system("pactl set-sink-mute @DEFAULT_SINK@ toggle");
         } else if (packet[64] == 0x0f) {
             printf("received left turn\n");
-            system("pactl set-sink-volume 1 -5%");
+            system("pactl set-sink-volume @DEFAULT_SINK@ -5%");
         } else if (packet[64] == 0x10) {
             printf("received right turn\n");
-            system("pactl set-sink-volume 1 +5%");
+            system("pactl set-sink-volume @DEFAULT_SINK@ +5%");
         }
     }
 }
 
 int main(int argc, const char **argv) {
-    const char *interface;
-    if (argc != 2) {
-        interface = "usbmon3";
-        printf("Using default interface \'%s\'\n", interface);
-    } else {
-        interface = argv[1];
-        printf("Using interface \'%s\'\n", interface);
-    }
+    char interface[32] = {0x00};
+    FILE *fp = popen("lsusb | awk '/Creative Technology/{print \"usbmon\"int($2)}'", "r");
+    fscanf(fp, "%31s", &interface);
+    pclose(fp);
+    printf("Using interface \'%s\'\n", interface);
 
     pcap_t *handle;
     char errbuf[PCAP_ERRBUF_SIZE];
