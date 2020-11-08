@@ -1,8 +1,8 @@
 .PHONY: clean
 
-all:
-	gcc capture.c -o cap.o -lpcap
+build:
+	gcc capture.c -o capture -lpcap
 
 clean:
-	rm *.o
+	rm capture
 

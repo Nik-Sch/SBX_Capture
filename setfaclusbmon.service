@@ -1,0 +1,10 @@
+[Unit]
+ Description=setfacl for usbmon
+ Requires=local-fs.target
+ After=local-fs.target
+
+[Service]
+ ExecStart=bash -c "/usr/bin/setfacl -m u:niklas:r /dev/usbmon*"
+
+[Install]
+ WantedBy=multi-user.target
